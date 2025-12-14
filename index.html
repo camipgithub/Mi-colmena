@@ -10,7 +10,10 @@
 <body>
   <h1>🐝 Mi Colmena</h1>
   <p>POS offline listo (IndexedDB)</p>
-  <button onclick="initDB()">Inicializar Base</button>
+  <button onclick="this.innerText='✔ Botón funciona'">
+      Inicializar Base
+      </button>
+      
   <script src="js/db.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
