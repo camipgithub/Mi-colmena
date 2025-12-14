@@ -6,6 +6,7 @@
   <title>Mi Colmena</title>
   <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f4c430">
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
   
   <link rel="stylesheet" href="style.css">
 </head>
@@ -49,7 +50,11 @@
 
 <h3>Comprobantes</h3>
 <ul id="listaVentas"></ul>
-
+<div id="camara" style="display:none;">
+  <video id="video" width="300"></video>
+  <button onclick="cerrarCamara()">Cerrar cámara</button>
+</div>
+  
 <script src="app.js"></script>
   <script>
 if ("serviceWorker" in navigator) {
