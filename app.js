@@ -172,5 +172,190 @@ function cerrarCamara() {
   document.getElementById("camara").style.display = "none";
   if (lector) lector.reset();
 }
+function reporteHoy() {
+  generarReporte("hoy");
+}
 
-                               
+function reporteMes() {
+  generarReporte("mes");
+}
+
+function generarReporte(tipo) {
+  const ahora = new Date();
+  let total = 0;
+  let porPago = { Efectivo: 0, QR: 0, Tarjeta: 0 };
+
+  const tx = db.transaction("ventas", "readonly");
+  const store = tx.objectStore("ventas");
+
+  store.openCursor().onsuccess = e => {
+    const cursor = e.target.result;
+    if (!cursor) {
+      mostrarReporte(total, porPago, tipo);
+      return;
+    }
+
+    const v = cursor.value;
+
+    if (v.rubro !== rubroActivo) {
+      cursor.continue();
+      return;
+    }
+
+    const fechaVenta = new Date(v.fecha);
+
+    const esHoy =
+      fechaVenta.toDateString() === ahora.toDateString();
+
+    const esMes =
+      fechaVenta.getMonth() === ahora.getMonth() &&
+      fechaVenta.getFullYear() === ahora.getFullYear();
+
+    if (
+      (tipo === "hoy" && esHoy) ||
+      (tipo === "mes" && esMes)
+    ) {
+      total += v.total;
+      porPago[v.pago] += v.total;
+    }
+
+    cursor.continue();
+  };
+}
+
+function mostrarReporte(total, porPago, tipo) {
+  document.getElementById("reporte").innerHTML = `
+    <h3>Reporte ${tipo === "hoy" ? "de Hoy" : "del Mes"}</h3>
+    <p><b>Total:</b> $${total}</p>
+    <ul>
+      <li>Efectivo: $${porPago.Efectivo}</li>
+      <li>QR: $${porPago.QR}</li>
+      <li>Tarjeta: $${porPago.Tarjeta}</li>
+    </ul>
+  `;
+}
+
+  function exportarCSV(tipo) {
+  const ahora = new Date();
+  let filas = [
+    ["Fecha", "Producto", "Cantidad", "Total", "Pago", "Rubro"]
+  ];
+
+  const tx = db.transaction("ventas", "readonly");
+  const store = tx.objectStore("ventas");
+
+  store.openCursor().onsuccess = e => {
+    const cursor = e.target.result;
+    if (!cursor) {
+      descargarCSV(filas, tipo);
+      return;
+    }
+
+    const v = cursor.value;
+    if (v.rubro !== rubroActivo) {
+      cursor.continue();
+      return;
+    }
+
+    const f = new Date(v.fecha);
+
+    const esHoy = f.toDateString() === ahora.toDateString();
+    const esMes =
+      f.getMonth() === ahora.getMonth() &&
+      f.getFullYear() === ahora.getFullYear();
+
+    if (
+      (tipo === "hoy" && esHoy) ||
+      (tipo === "mes" && esMes)
+    ) {
+      filas.push([
+        v.fecha,
+        v.producto,
+        v.cantidad,
+        v.total,
+        v.pago,
+        v.rubro
+      ]);
+    }
+
+    cursor.continue();
+  };
+}
+
+function descargarCSV(filas, tipo) {
+  const contenido = filas.map(f => f.join(",")).join("\n");
+  const blob = new Blob([contenido], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `mi_colmena_${rubroActivo}_${tipo}.csv`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+function exportarPDF(tipo) {
+  const ahora = new Date();
+  let contenido = `
+    <h2>Mi Colmena</h2>
+    <p>Rubro: ${rubroActivo}</p>
+    <p>Periodo: ${tipo}</p>
+    <table border="1" cellspacing="0" cellpadding="4">
+      <tr>
+        <th>Fecha</th>
+        <th>Producto</th>
+        <th>Cant.</th>
+        <th>Total</th>
+        <th>Pago</th>
+      </tr>
+  `;
+
+  const tx = db.transaction("ventas", "readonly");
+  const store = tx.objectStore("ventas");
+
+  store.openCursor().onsuccess = e => {
+    const cursor = e.target.result;
+    if (!cursor) {
+      contenido += "</table>";
+      imprimirPDF(contenido);
+      return;
+    }
+
+    const v = cursor.value;
+    if (v.rubro !== rubroActivo) {
+      cursor.continue();
+      return;
+    }
+
+    const f = new Date(v.fecha);
+    const esHoy = f.toDateString() === ahora.toDateString();
+    const esMes =
+      f.getMonth() === ahora.getMonth() &&
+      f.getFullYear() === ahora.getFullYear();
+
+    if (
+      (tipo === "hoy" && esHoy) ||
+      (tipo === "mes" && esMes)
+    ) {
+      contenido += `
+        <tr>
+          <td>${v.fecha}</td>
+          <td>${v.producto}</td>
+          <td>${v.cantidad}</td>
+          <td>$${v.total}</td>
+          <td>${v.pago}</td>
+        </tr>
+      `;
+    }
+
+    cursor.continue();
+  };
+}
+
+function imprimirPDF(html) {
+  const w = window.open("", "_blank");
+  w.document.write(html);
+  w.document.close();
+  w.print();
+                        }
+  
