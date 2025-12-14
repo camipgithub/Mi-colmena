@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Colmena</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <h1>🐝 Mi Colmena</h1>
+  <p>POS offline listo (IndexedDB)</p>
+  <button onclick="initDB()">Inicializar Base</button>
+  <script src="js/db.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
