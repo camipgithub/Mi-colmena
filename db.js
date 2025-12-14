@@ -1,6 +1,6 @@
 console.log("db.js cargado correctamente");
 document.body.innerHTML += "<p>📦 db.js cargado</p>";
-funtion initDB(){
+function initDB(){
     const request = indexedDB.open('mi_colmena_db',1);
 
       request.onupgradeneeded = e => {
