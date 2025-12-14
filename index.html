@@ -13,7 +13,16 @@
   <button onclick="this.innerText='✔ Botón funciona'">
       Inicializar Base
       </button>
+<h2>Inventario</h2>
 
+<input id="nombre" placeholder="Producto" />
+<input id="precio" type="number" placeholder="Precio" />
+<input id="stock" type="number" placeholder="Stock" />
+
+<button onclick="guardarProducto()">Guardar producto</button>
+
+<ul id="lista"></ul>
+  
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
