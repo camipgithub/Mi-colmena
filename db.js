@@ -11,9 +11,7 @@ function initDB(){
                             if(!db.objectStoreNames.contains('ventas')){
                                   db.createObjectStore('ventas',{keyPath:'id',autoIncrement:true});
                                       }
-                                        };
-
-                                          request.onsuccess = () => {
+                                        };                                          request.onsuccess = () => {
                                               document.body.innerHTML += "<p>✅ Base creada correctamente</p>";
                                                 };
 
@@ -21,6 +19,6 @@ function initDB(){
                                                       document.body.innerHTML += "<p>❌ Error al crear la base</p>";
                                                         };
                                                         }
-                                                        
-}
+
+
                 
