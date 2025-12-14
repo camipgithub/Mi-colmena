@@ -1,9 +1,0 @@
-{
-  "name": "Mi Colmena",
-  "short_name": "Mi Colmena",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffcc00",
-  "icons": []
-}
