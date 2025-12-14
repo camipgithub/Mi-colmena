@@ -60,6 +60,23 @@
   <video id="video" width="300"></video>
   <button onclick="cerrarCamara()">Cerrar cámara</button>
 </div>
+  <hr>
+
+<h2>Reportes</h2>
+
+<button onclick="reporteHoy()">📅 Hoy</button>
+<button onclick="reporteMes()">🗓️ Mes</button>
+
+<div id="reporte"></div>
+  <hr>
+
+<h2>Exportar</h2>
+
+<button onclick="exportarCSV('hoy')">⬇️ Excel (Hoy)</button>
+<button onclick="exportarCSV('mes')">⬇️ Excel (Mes)</button>
+
+<button onclick="exportarPDF('hoy')">📄 PDF (Hoy)</button>
+<button onclick="exportarPDF('mes')">📄 PDF (Mes)</button>
   
 <script src="app.js"></script>
   <script>
