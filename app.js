@@ -28,14 +28,15 @@ function initDB() {
 // -------- INVENTARIO --------
 
 function guardarProducto() {
-  const nombre = document.getElementById("nombre").value;
+  const codigo = document.getElementById("codigo").value;
+const nombre = document.getElementById("nombre").value;
   const precio = Number(document.getElementById("precio").value);
   const stock = Number(document.getElementById("stock").value);
 
   const tx = db.transaction("productos", "readwrite");
   const store = tx.objectStore("productos");
-
-  store.add({ nombre, precio, stock });
+      
+store.add({ codigo, nombre, precio, stock });
 
   tx.oncomplete = () => {
     listarProductos();
@@ -132,4 +133,24 @@ function listarVentas() {
     }
   };
       }
+let lector;
+let stream;
+
+function abrirCamara() {
+  document.getElementById("camara").style.display = "block";
+  lector = new ZXing.BrowserBarcodeReader();
+
+  lector.decodeFromVideoDevice(null, "video", (result, err) => {
+    if (result) {
+      document.getElementById("codigo").value = result.text;
+      cerrarCamara();
+    }
+  });
+}
+
+function cerrarCamara() {
+  document.getElementById("camara").style.display = "none";
+  if (lector) lector.reset();
+}
+
                                
