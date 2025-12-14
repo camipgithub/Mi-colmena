@@ -30,6 +30,47 @@ function initDB(){
     document.body.innerHTML += "<p>❌ Error al crear la base</p>";
   };
 }
+function guardarProducto(){
+  const nombre = document.getElementById('nombre').value;
+  const precio = Number(document.getElementById('precio').value);
+  const stock = Number(document.getElementById('stock').value);
+
+  const request = indexedDB.open('mi_colmena_db',1);
+
+  request.onsuccess = e => {
+    const db = e.target.result;
+    const tx = db.transaction('productos','readwrite');
+    const store = tx.objectStore('productos');
+
+    store.add({ nombre, precio, stock });
+
+    tx.oncomplete = () => {
+      listarProductos();
+    };
+  };
+}
+
+function listarProductos(){
+  const request = indexedDB.open('mi_colmena_db',1);
+
+  request.onsuccess = e => {
+    const db = e.target.result;
+    const tx = db.transaction('productos','readonly');
+    const store = tx.objectStore('productos');
+
+    const lista = document.getElementById('lista');
+    lista.innerHTML = '';
+
+    store.openCursor().onsuccess = e => {
+      const cursor = e.target.result;
+      if(cursor){
+        const p = cursor.value;
+        lista.innerHTML += `<li>${p.nombre} — $${p.precio} — stock: ${p.stock}</li>`;
+        cursor.continue();
+      }
+    };
+  };
+}
 
 
 
